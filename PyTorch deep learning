@@ -1,0 +1,66 @@
+#neural_network
+
+import torch
+import torch.nn as nn
+
+#===== DATA=======
+
+x = torch.tensor([
+    [2, 60, 45], [3, 70, 55], [4, 75, 60],
+    [5, 80, 65], [6, 85, 70], [7, 90, 78],
+    [8, 92, 82], [9, 95, 88], [10, 98, 95],
+    [1, 50, 35], [3, 65, 52], [5, 78, 68],
+    [7, 88, 76], [8, 91, 84], [6, 83, 71],
+    [4, 72, 58], [9, 94, 90], [2, 55, 42],
+    [5, 75, 63], [7, 85, 74]
+], dtype=torch.float32)
+
+y = torch.tensor([0, 0, 0, 1, 1, 1, 1, 1, 1,
+                  0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1],
+                  dtype=torch.float32).reshape(-1, 1)
+
+#=====BUILD======
+
+class studentNN(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.layer1 = nn.Linear(3 , 8)
+        self.layer2 = nn.Linear(8 , 4)
+        self.layer3 = nn.Linear(4 , 1)
+        self.relu = nn.ReLU()
+        self.sigmoid = nn.Sigmoid()
+
+    def forward(self , x):
+        x = self.relu(self.layer1(x))
+        x = self.relu(self.layer2(x))
+        x = self.sigmoid(self.layer3(x))
+        return x
+    
+model = studentNN()
+print(model)
+
+
+#====== TRAIN======
+
+criterion = nn.BCELoss()
+optimizer = torch.optim.Adam(model.parameters(), lr = 0.01)
+
+print("\n training")
+for epoch in range (100):
+    y_pred = model(x)
+    loss = criterion(y_pred , y)
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+
+    if (epoch + 1) % 20 == 0:
+        print(f"epoch {epoch+1}/100 - loss : {loss.item():.4f}")
+
+#=====predict======
+
+with torch.no_grad():
+    new_student = torch.tensor([[7 , 85 ,72]],dtype=torch.float32)
+    prediction = model(new_student)
+    result = "pass" if prediction[0]>0.5 else "fail"
+    print(f"\n hours : 7 , attendance : 85% ,prev :72%")
+    print(f"prediction : {result} ({prediction[0].item():.2f})")
