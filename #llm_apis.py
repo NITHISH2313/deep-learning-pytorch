@@ -7,7 +7,7 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
 # ===== SETUP API KEY =====
-api_key = "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"  # paste your key!
+api_key = "GROQ_API_KEY"  # paste your key!
 
 # ===== SIMPLE GROQ TEST =====
 print("===== DIRECT GROQ API =====")
